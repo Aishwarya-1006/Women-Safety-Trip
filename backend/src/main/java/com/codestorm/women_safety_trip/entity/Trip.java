@@ -34,6 +34,10 @@ public class Trip {
 
     @Enumerated(EnumType.STRING)
     private TripStatus status;
+    // Trip.java
+    private Boolean sosTriggered = false;
+    private LocalDateTime sosTime;
+
 
 
     // getters and setters below (omitted for brevity in this snippet)

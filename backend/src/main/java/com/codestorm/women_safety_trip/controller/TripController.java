@@ -1,7 +1,6 @@
 package com.codestorm.women_safety_trip.controller;
 
-import com.codestorm.women_safety_trip.dto.TripResponse;
-import com.codestorm.women_safety_trip.dto.TripStartRequest;
+import com.codestorm.women_safety_trip.dto.*;
 import com.codestorm.women_safety_trip.entity.Trip;
 import com.codestorm.women_safety_trip.service.TripService;
 import org.springframework.http.ResponseEntity;
@@ -21,32 +20,46 @@ public class TripController {
         this.tripService = tripService;
     }
 
+    // ✅ Start Trip
     @PostMapping("/start")
     public ResponseEntity<TripResponse> startTrip(@Valid @RequestBody TripStartRequest request){
         Trip saved = tripService.startTrip(request);
-        TripResponse res = new TripResponse();
-        res.setTripId(saved.getId());
-        res.setUserId(saved.getUserId());
-        res.setStartTime(saved.getStartTime());
-        res.setExpectedEndTime(saved.getExpectedEndTime());
-        res.setStatus(saved.getStatus().name());
-        res.setCurrentLat(saved.getCurrentLat());
-        res.setCurrentLng(saved.getCurrentLng());
-        return ResponseEntity.status(201).body(res);
+        return ResponseEntity.status(201).body(toResponse(saved));
     }
 
+    // ✅ End Trip
     @PutMapping("/end/{tripId}")
     public ResponseEntity<TripResponse> endTrip(@PathVariable Long tripId) {
         Trip ended = tripService.endTrip(tripId);
-        TripResponse res = new TripResponse();
-        res.setTripId(ended.getId());
-        res.setUserId(ended.getUserId());
-        res.setStartTime(ended.getStartTime());
-        res.setExpectedEndTime(ended.getExpectedEndTime());
-        res.setStatus(ended.getStatus().name());
-        res.setCurrentLat(ended.getCurrentLat());
-        res.setCurrentLng(ended.getCurrentLng());
-        return ResponseEntity.ok(res);
+        return ResponseEntity.ok(toResponse(ended));
     }
 
+    // ✅ Update Location
+    @PutMapping("/{tripId}/location")
+    public ResponseEntity<TripResponse> updateLocation(@PathVariable Long tripId,
+                                                       @Valid @RequestBody LocationUpdateRequest request) {
+        Trip updated = tripService.updateLocation(tripId, request);
+        return ResponseEntity.ok(toResponse(updated));
+    }
+
+    // ✅ Trigger SOS
+    @PostMapping("/{tripId}/sos")
+    public ResponseEntity<TripResponse> triggerSos(@PathVariable Long tripId,
+                                                   @RequestBody SosRequest sosRequest) {
+        Trip updated = tripService.triggerSos(tripId, sosRequest);
+        return ResponseEntity.ok(toResponse(updated));
+    }
+
+    // 🔹 Utility method to convert Trip → TripResponse
+    private TripResponse toResponse(Trip trip) {
+        TripResponse res = new TripResponse();
+        res.setTripId(trip.getId());
+        res.setUserId(trip.getUserId());
+        res.setStartTime(trip.getStartTime());
+        res.setExpectedEndTime(trip.getExpectedEndTime());
+        res.setStatus(trip.getStatus().name());
+        res.setCurrentLat(trip.getCurrentLat());
+        res.setCurrentLng(trip.getCurrentLng());
+        return res;
+    }
 }
