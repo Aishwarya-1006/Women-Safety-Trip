@@ -12,7 +12,7 @@ import jakarta.validation.Valid;
 @RequestMapping("/trip")
 @CrossOrigin(origins = "http://localhost:3000") // allow React dev server
 @Validated
-public class TripController {
+public class  TripController {
 
     private final TripService tripService;
 
